@@ -1,0 +1,4 @@
+enum Identity {
+  black,
+  white,
+}
