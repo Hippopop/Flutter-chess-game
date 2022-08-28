@@ -29,19 +29,19 @@ class _BoardFrameState extends State<BoardFrame> {
           Square create = Square.fromWidget(column: column, row: row);
           if (create.boxNumber() == 31 || create.boxNumber() == 32) {
             create.setPiece(Pawn(
-                currentCoordinate: SquareCoordinate(column: column, row: row), identity: Identity.black));
+                 SquareCoordinate(column: column, row: row), Identity.black));
             x.add(create);
           } else if (create.boxNumber() == 33 || create.boxNumber() == 35) {
             create.setPiece(Bishop(
-                currentCoordinate: SquareCoordinate(column: column, row: row), identity: Identity.white));
+                SquareCoordinate(column: column, row: row), Identity.white));
             x.add(create);
           } else if (create.boxNumber() > 15 && create.boxNumber() < 48) {
             x.add(create);
           } else {
             create.setPiece(
               Rook(
-                currentCoordinate: SquareCoordinate(column: column, row: row),
-                identity: Identity.black,
+               SquareCoordinate(column: column, row: row),
+               Identity.black,
               ),
             );
             x.add(create);

@@ -29,8 +29,8 @@ class SquareWidgetState extends State<SquareWidget> {
         return Colors.red;
       default:
         return widget.myState.getIdentity() == Identity.black
-            ? Colors.black
-            : Colors.white;
+            ? const Color.fromARGB(255, 190, 140, 87)
+            : const Color.fromARGB(255, 200, 200, 200);
     }
   }
 
@@ -44,7 +44,7 @@ class SquareWidgetState extends State<SquareWidget> {
           setState(() {
             widget.myState.setPiece(data..updateCoord(widget.myState.getCoord));
             if (widget.myState.piece != null &&
-                widget.myState.getIdentity() != data.getIdentity) {
+                widget.myState.piece!.getIdentity != data.getIdentity) {
               widget.myState.setState(SquareState.kill);
             } else {
               widget.myState.setState(SquareState.none);
