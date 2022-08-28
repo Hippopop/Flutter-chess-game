@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 
+import 'package:chess_game/src/global/constants/constants.dart';
 import 'package:chess_game/src/models/piece_models.dart';
 import 'package:flutter/material.dart';
 
@@ -18,6 +19,7 @@ class BoardFrame extends StatefulWidget {
 
 class _BoardFrameState extends State<BoardFrame> {
   List<Square> x = [];
+
   createGrid() {
     List.generate(
       widget.yCount,
@@ -25,19 +27,21 @@ class _BoardFrameState extends State<BoardFrame> {
         widget.xCount,
         (row) {
           Square create = Square.fromWidget(column: column, row: row);
-          // print(create.boxNumber());
           if (create.boxNumber() == 31 || create.boxNumber() == 32) {
             create.setPiece(Pawn(
-                currentCoordinate: SquareCoordinate(column: column, row: row)));
-                x.add(create);
-                
+                currentCoordinate: SquareCoordinate(column: column, row: row), identity: Identity.black));
+            x.add(create);
+          } else if (create.boxNumber() == 33 || create.boxNumber() == 35) {
+            create.setPiece(Bishop(
+                currentCoordinate: SquareCoordinate(column: column, row: row), identity: Identity.white));
+            x.add(create);
           } else if (create.boxNumber() > 15 && create.boxNumber() < 48) {
             x.add(create);
           } else {
-            print("got here");
             create.setPiece(
-              Bishop(
+              Rook(
                 currentCoordinate: SquareCoordinate(column: column, row: row),
+                identity: Identity.black,
               ),
             );
             x.add(create);
@@ -98,9 +102,6 @@ class _BoardFrameState extends State<BoardFrame> {
       }),
     ));
   }
-
-/*   double _getSquareSize(double height, double width) =>
-      height > width ? height / 8 : width / 8; */
 
   double _getBoardSize(double height, double width) =>
       height < width ? height : width;

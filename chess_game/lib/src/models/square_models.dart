@@ -91,8 +91,7 @@ class Square {
     _squareState = state;
   }
 
-  setPiece(PieceStructure piece) {
-    // setState(SquareState.regular);
+  setPiece(PieceStructure? piece) {
     _piece = piece;
   }
 

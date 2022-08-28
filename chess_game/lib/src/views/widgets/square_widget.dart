@@ -10,11 +10,17 @@ class SquareWidget extends StatefulWidget {
     required this.myState,
   }) : super(key: key);
   final Square myState;
+  updateOnkill() {
+    myState.setPiece(null);
+  }
+
   @override
-  State<SquareWidget> createState() => _SquareWidgetState();
+  State<SquareWidget> createState() => SquareWidgetState();
+
+  // const Theme()of(context);
 }
 
-class _SquareWidgetState extends State<SquareWidget> {
+class SquareWidgetState extends State<SquareWidget> {
   _getColor() {
     switch (widget.myState.getCurrentState) {
       case SquareState.activity:
@@ -28,36 +34,23 @@ class _SquareWidgetState extends State<SquareWidget> {
     }
   }
 
-/*   Widget? _getWidget() {
-    switch (widget.myState.getCurrentState) {
-      case SquareState.empty:
-        return Container();
-      default:
-        return LayoutBuilder(builder: (context, constraints) {
-          return PieceWidget(
-              piece: widget.myState.piece!,
-              height: constraints.maxHeight,
-              width: constraints.maxWidth);
-        });
-    }
-  } */
-
   @override
   Widget build(BuildContext context) {
+    MediaQuery.of(context);
     return GestureDetector(
-      onTap: () {
-        print(widget.myState.getCoord.getPostion().toString());
-        print("Box = ${widget.myState.boxNumber()}");
-
-/*         String x = "abxysiwjf";
-        final a = x.characters;
-        print(a);
-        a.forEach((element) {
-          print("$element\n");
-        }); */
-      },
+      onTap: () {},
       child: DragTarget<PieceStructure>(
-        onAccept: (data) => print("accepted!"),
+        onAccept: (data) {
+          setState(() {
+            widget.myState.setPiece(data..updateCoord(widget.myState.getCoord));
+            if (widget.myState.piece != null &&
+                widget.myState.getIdentity() != data.getIdentity) {
+              widget.myState.setState(SquareState.kill);
+            } else {
+              widget.myState.setState(SquareState.none);
+            }
+          });
+        },
         onMove: (details) {
           if (details.data.getPossibleMoves.contains(widget.myState.getCoord)) {
             setState(() {
@@ -72,17 +65,21 @@ class _SquareWidgetState extends State<SquareWidget> {
             });
           });
         },
+        onWillAccept: (data) {
+          return data!.getPossibleMoves.contains(widget.myState.getCoord);
+        },
         builder: (context, candidateData, rejectedData) => Card(
           color: _getColor(),
           margin: EdgeInsets.zero,
           elevation: 0,
-          child: widget.myState.containsPiece()?
-              LayoutBuilder(builder: (context, constraints) {
+          child: widget.myState.containsPiece()
+              ? LayoutBuilder(builder: (context, constraints) {
                   return PieceWidget(
                       piece: widget.myState.piece!,
                       height: constraints.maxHeight,
                       width: constraints.maxWidth);
-                }) : Container(),
+                })
+              : Container(),
         ),
       ),
     );
