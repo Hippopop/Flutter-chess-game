@@ -35,7 +35,10 @@ class _BoardFrameState extends State<BoardFrame> {
             create.setPiece(Bishop(
                 SquareCoordinate(column: column, row: row), Identity.white));
             x.add(create);
+          } else if (create.boxNumber() > 30 && create.boxNumber() < 52) {
+            x.add(create);
           } else if (create.boxNumber() > 15 && create.boxNumber() < 48) {
+            create.setPiece(Knight(SquareCoordinate(column: column, row: row), Identity.white));
             x.add(create);
           } else {
             create.setPiece(
@@ -74,7 +77,7 @@ class _BoardFrameState extends State<BoardFrame> {
               decoration: BoxDecoration(
                 color: Colors.grey,
                 border: Border.all(
-                  color: Colors.brown.shade300,
+                  color: Colors.grey.shade700,
                   width: 5,
                 ),
               ),

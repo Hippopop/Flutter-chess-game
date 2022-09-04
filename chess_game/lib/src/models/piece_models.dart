@@ -124,3 +124,38 @@ class Rook extends PieceStructure {
   @override
   int get getWorth => 3;
 }
+class Knight extends PieceStructure {
+  Knight(SquareCoordinate currentCoordinate, Identity identity)
+      : super._(currentCoordinate, identity);
+
+  String name = "knight";
+
+  @override
+  List<SquareCoordinate> get getPossibleMoves {
+    final List<SquareCoordinate> moves = [];
+      moves.add(SquareCoordinate(
+          column: currentCoordinate!.column + 2, row: currentCoordinate!.row + 1));
+      moves.add(SquareCoordinate(
+          column: currentCoordinate!.column + 2, row: currentCoordinate!.row - 1));
+      moves.add(SquareCoordinate(
+          column: currentCoordinate!.column + 1, row: currentCoordinate!.row + 2));
+                moves.add(SquareCoordinate(
+          column: currentCoordinate!.column - 1, row: currentCoordinate!.row + 2));
+      moves.add(SquareCoordinate(
+          column: currentCoordinate!.column - 2, row: currentCoordinate!.row + 1));
+      moves.add(SquareCoordinate(
+          column: currentCoordinate!.column - 2, row: currentCoordinate!.row - 1));
+      moves.add(SquareCoordinate(
+          column: currentCoordinate!.column + 1, row: currentCoordinate!.row - 2));
+                moves.add(SquareCoordinate(
+          column: currentCoordinate!.column - 1, row: currentCoordinate!.row - 2));
+    return moves;
+  }
+
+  @override
+  String get getName => name;
+  @override
+  String get imagePath => "assets/pieces/png/${identity.name}_$name.png";
+  @override
+  int get getWorth => 3;
+}

@@ -30,7 +30,7 @@ class SquareWidgetState extends State<SquareWidget> {
       default:
         return widget.myState.getIdentity() == Identity.black
             ? const Color.fromARGB(255, 190, 140, 87)
-            : const Color.fromARGB(255, 200, 200, 200);
+            : const Color.fromARGB(216, 255, 255, 255);
     }
   }
 
@@ -41,21 +41,27 @@ class SquareWidgetState extends State<SquareWidget> {
       onTap: () {},
       child: DragTarget<PieceStructure>(
         onAccept: (data) {
-          setState(() {
-            widget.myState.setPiece(data..updateCoord(widget.myState.getCoord));
-            if (widget.myState.piece != null &&
-                widget.myState.piece!.getIdentity != data.getIdentity) {
-              widget.myState.setState(SquareState.kill);
-            } else {
-              widget.myState.setState(SquareState.none);
-            }
-          });
+          if (widget.myState.piece != null &&
+              widget.myState.piece!.getIdentity.name != data.getIdentity.name) {
+            widget.myState.setState(SquareState.kill);
+          } else {
+            widget.myState.setState(SquareState.none);
+          }
+          widget.myState.setPiece(data..updateCoord(widget.myState.getCoord));
+          setState(() {});
         },
         onMove: (details) {
           if (details.data.getPossibleMoves.contains(widget.myState.getCoord)) {
-            setState(() {
-              widget.myState.setState(SquareState.activity);
-            });
+            if (widget.myState.piece != null &&
+                widget.myState.piece!.getIdentity != details.data.getIdentity) {
+              setState(() {
+                widget.myState.setState(SquareState.kill);
+              });
+            } else {
+              setState(() {
+                widget.myState.setState(SquareState.activity);
+              });
+            }
           }
         },
         onLeave: (data) {
