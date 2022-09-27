@@ -1,5 +1,5 @@
-import 'package:chess_game/src/views/entry_home.dart';
-import 'package:chess_game/systems/theme/theme.dart';
+import 'package:chess_game/src/services/systems/routes/router.dart';
+import 'package:chess_game/src/services/systems/theme/theme.dart';
 import 'package:flutter/material.dart';
 
 
@@ -8,11 +8,14 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
+      routeInformationProvider: myRouter.routeInformationProvider,
+      routeInformationParser: myRouter.routeInformationParser,
+      routerDelegate: myRouter.routerDelegate,
       title: 'Flutter Chess',
       debugShowCheckedModeBanner: false,
       theme: LightTheme.lightTheme,
-      home: const HomeScreen(),
+      // home: const HomeScreen(),
     );
   }
 }

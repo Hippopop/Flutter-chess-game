@@ -35,8 +35,8 @@ class PieceWidget extends StatelessWidget {
           width: width + 10,
         ),
         onDragCompleted: () {
-          context.findAncestorWidgetOfExactType<SquareWidget>()?.updateOnkill();
-          context.findAncestorStateOfType<SquareWidgetState>()?.setState(() {});
+          context.findAncestorWidgetOfExactType<SquareWidget>()?.updateOnkill(); // TODO: Ship this method to the State management section.
+          context.findAncestorStateOfType<SquareWidgetState>()?.setState(() {}); // TODO: Ship this method to the State management section.
         },
         child: Image.asset(
           piece.imagePath,

@@ -38,7 +38,7 @@ class _BoardFrameState extends State<BoardFrame> {
           } else if (create.boxNumber() > 30 && create.boxNumber() < 52) {
             x.add(create);
           } else if (create.boxNumber() > 15 && create.boxNumber() < 48) {
-            create.setPiece(Knight(SquareCoordinate(column: column, row: row), Identity.white));
+            create.setPiece(Queen(SquareCoordinate(column: column, row: row), Identity.white));
             x.add(create);
           } else {
             create.setPiece(
