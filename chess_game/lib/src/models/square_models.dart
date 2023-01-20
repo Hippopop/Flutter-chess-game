@@ -1,22 +1,23 @@
 import 'package:chess_game/src/global/constants/constants.dart';
 import 'package:chess_game/src/models/piece_models.dart';
+import 'package:chess_game/src/models/piece_models.dart';
 
 class SquareCoordinate {
   final int column;
   final int row;
 
   SquareCoordinate({required this.column, required this.row});
-  factory SquareCoordinate.fromPosition(String x, int y) {
+  factory SquareCoordinate.fromPosition({required SquarePosition position}) {
     return SquareCoordinate(
-      row: y,
-      column: charToNum[x] ?? -1,
+      row: position.row,
+      column: charToNum[position.column] ?? -1,
     );
   }
 
   SquarePosition getPostion() => SquarePosition.fromCoordinate(this);
 
-  Identity getIdentity() =>
-      (column + row).isOdd ? Identity.white : Identity.black;
+  Identity getSquareIdentity() =>
+      (column + row).isOdd ? Identity.black : Identity.white;
 
   @override
   bool operator ==(Object other) {
@@ -41,7 +42,7 @@ class SquarePosition {
 
   factory SquarePosition.fromCoordinate(SquareCoordinate coordinate) {
     return SquarePosition(
-        row: (coordinate.row + 1),
+        row: 8 - (coordinate.row),
         column: numToChar[coordinate.column] ?? "error");
   }
 
@@ -66,17 +67,16 @@ class Square {
   PieceStructure? _piece;
   SquareState _squareState = SquareState.none;
 
-  Square._(this._squareCoordinate,  this._piece);
+  Square._(this._squareCoordinate, this._piece);
 
   factory Square.fromWidget(
       {required int row, required int column, PieceStructure? piece}) {
-    return Square._(SquareCoordinate(column: column, row: row),
-        /* (piece == null) ? SquareState.empty : SquareState.regular, */ piece);
+    return Square._(SquareCoordinate(column: column, row: row), piece);
   }
 
   SquareState get getCurrentState => _squareState;
 
-  Identity getIdentity() => _squareCoordinate.getIdentity();
+  Identity getIdentity() => _squareCoordinate.getSquareIdentity();
 
   PieceStructure? get piece => _piece;
 
@@ -85,15 +85,15 @@ class Square {
   int boxNumber() =>
       _squareCoordinate.column +
       _squareCoordinate.row +
-      (_squareCoordinate.row * 7);
+      (_squareCoordinate.row * 7) +
+      1;
 
   setState(SquareState state) {
     _squareState = state;
   }
 
-  setPiece(PieceStructure? piece) {
-    _piece = piece;
-  }
+  setPiece(PieceStructure piece) => _piece = piece;
+  removePiece() => _piece = null;
 
   bool containsPiece() => _piece != null;
 }

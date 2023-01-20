@@ -2,7 +2,7 @@ import 'package:chess_game/src/models/square_models.dart';
 
 import '../global/constants/constants.dart';
 
-class PieceStructure {
+abstract class PieceStructure {
   PieceStructure._(this.currentCoordinate, this.identity);
 
   SquareCoordinate? currentCoordinate;
@@ -20,6 +20,13 @@ class PieceStructure {
 
   void updateCoord(SquareCoordinate coordinate) {
     currentCoordinate = coordinate;
+    onCoordUpdate();
+  }
+
+  void onCoordUpdate() {}
+
+  void updateIdentity(Identity id) {
+    identity = id;
   }
 
   List<SquareCoordinate> get getPossibleMoves {
@@ -38,14 +45,39 @@ class Pawn extends PieceStructure {
       : super._(currentCoordinate, identity);
 
   String name = "pawn";
-
+  bool firstMove = true;
   @override
   SquareCoordinate get getCurrentCoordinate => currentCoordinate!;
   @override
   List<SquareCoordinate> get getPossibleMoves {
-    final rowMove = SquareCoordinate(
-        column: currentCoordinate!.column, row: currentCoordinate!.row + 1);
-    return [rowMove];
+    List<SquareCoordinate> moves = [];
+    if (identity == Identity.black) {
+      final rowMove = SquareCoordinate(
+          column: currentCoordinate!.column, row: currentCoordinate!.row + 1);
+      moves.add(rowMove);
+      if (firstMove) {
+        final secondSquare = SquareCoordinate(
+            column: currentCoordinate!.column, row: currentCoordinate!.row + 2);
+        moves.add(secondSquare);
+      }
+      return moves;
+    } else {
+      final rowMove = SquareCoordinate(
+          column: currentCoordinate!.column, row: currentCoordinate!.row - 1);
+      moves.add(rowMove);
+      if (firstMove) {
+        final secondSquare = SquareCoordinate(
+            column: currentCoordinate!.column, row: currentCoordinate!.row - 2);
+        moves.add(secondSquare);
+      }
+      return moves;
+    }
+  }
+
+  @override
+  void onCoordUpdate() {
+    firstMove = false;
+    super.onCoordUpdate();
   }
 
   @override
@@ -211,4 +243,58 @@ class Queen extends PieceStructure {
   String get imagePath => "assets/pieces/png/${identity.name}_$name.png";
   @override
   int get getWorth => 9;
+}
+
+class King extends PieceStructure {
+  King(SquareCoordinate currentCoordinate, Identity identity)
+      : super._(currentCoordinate, identity);
+
+/*   bool isSelected = false;
+
+  @override
+  SquareCoordinate? get getCurrentCoordinate => ownCoordinate ?? super.getCurrentCoordinate; */
+
+  /* @override
+  void updateIdentity(Identity newIdentity) {
+    ownIdentity = newIdentity;
+  } */
+
+/*   @override
+  bool get getIsSelected => isSelected;
+
+  @override
+  Identity get getIdentity => ownIdentity ?? super.getIdentity; */
+
+  @override
+  List<SquareCoordinate> get getPossibleMoves {
+    final List<SquareCoordinate> moves = [];
+    moves.add(SquareCoordinate(
+        column: currentCoordinate!.column + 1, row: currentCoordinate!.row));
+    moves.add(SquareCoordinate(
+        column: currentCoordinate!.column - 1, row: currentCoordinate!.row));
+    moves.add(SquareCoordinate(
+        column: currentCoordinate!.column, row: currentCoordinate!.row + 1));
+    moves.add(SquareCoordinate(
+        column: currentCoordinate!.column, row: currentCoordinate!.row - 1));
+    moves.add(SquareCoordinate(
+        column: currentCoordinate!.column + 1,
+        row: currentCoordinate!.row + 1));
+    moves.add(SquareCoordinate(
+        column: currentCoordinate!.column - 1,
+        row: currentCoordinate!.row - 1));
+    moves.add(SquareCoordinate(
+        column: currentCoordinate!.column + 1,
+        row: currentCoordinate!.row - 1));
+    moves.add(SquareCoordinate(
+        column: currentCoordinate!.column - 1,
+        row: currentCoordinate!.row + 1));
+    return moves;
+  }
+
+  @override
+  String get imagePath => "assets/pieces/png/${identity.name}_$getName.png";
+  @override
+  String get getName => "king";
+  @override
+  int get getWorth => 55;
 }

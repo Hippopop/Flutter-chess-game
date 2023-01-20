@@ -1,6 +1,7 @@
 import 'package:chess_game/src/views/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 
+
 import '../../global/constants/constants.dart';
 import '../../models/models.dart';
 
@@ -9,15 +10,15 @@ class SquareWidget extends StatefulWidget {
     Key? key,
     required this.myState,
   }) : super(key: key);
+
   final Square myState;
+
   updateOnkill() {
-    myState.setPiece(null);
+    myState.removePiece();
   }
 
   @override
   State<SquareWidget> createState() => SquareWidgetState();
-
-  // const Theme()of(context);
 }
 
 class SquareWidgetState extends State<SquareWidget> {
@@ -36,13 +37,15 @@ class SquareWidgetState extends State<SquareWidget> {
 
   @override
   Widget build(BuildContext context) {
-    MediaQuery.of(context);
+    // MediaQuery.of(context);
     return GestureDetector(
-      onTap: () {},
+      onTap: () {
+print(widget.myState.boxNumber());
+      },
       child: DragTarget<PieceStructure>(
         onAccept: (data) {
           if (widget.myState.piece != null &&
-              widget.myState.piece!.getIdentity.name != data.getIdentity.name) {
+              widget.myState.piece!.identity.name != data.identity.name) {
             widget.myState.setState(SquareState.kill);
           } else {
             widget.myState.setState(SquareState.none);
@@ -53,7 +56,7 @@ class SquareWidgetState extends State<SquareWidget> {
         onMove: (details) {
           if (details.data.getPossibleMoves.contains(widget.myState.getCoord)) {
             if (widget.myState.piece != null &&
-                widget.myState.piece!.getIdentity != details.data.getIdentity) {
+                widget.myState.piece!.identity != details.data.identity) {
               setState(() {
                 widget.myState.setState(SquareState.kill);
               });

@@ -1,4 +1,5 @@
 import 'package:chess_game/src/models/models.dart';
+import 'package:chess_game/src/models/piece_models.dart';
 import 'package:chess_game/src/views/widgets/square_widget.dart';
 import 'package:flutter/material.dart';
 
@@ -18,7 +19,10 @@ class PieceWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        // print(piece.getPossibleMoves);
+        print(piece.identity.name);
+        print(piece.currentCoordinate);
+        print(piece.imagePath);
+        
       },
       child: Draggable<PieceStructure>(
         data: piece,
