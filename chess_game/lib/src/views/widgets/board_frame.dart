@@ -32,25 +32,23 @@ class BoardFrame extends StatelessWidget {
             child: BlocBuilder<GameBloc, GameState>(
               builder: (context, state) {
                 return LayoutBuilder(builder: (context, constrains) {
-                        print(state.squares[0].boxNumber());
-                        print(state.squares[0].piece?.identity);
+                  print(state.squares[0].boxNumber());
+                  print(state.squares[0].piece?.identity);
 
                   return SizedBox.square(
                     dimension: _getBoardSize(
                         constrains.maxHeight, constrains.maxWidth),
                     child: GridView.builder(
-                      itemCount: state.squares.length,
-                      scrollDirection: Axis.horizontal,
-                      physics: const NeverScrollableScrollPhysics(),
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: xCount),
-                      itemBuilder: (context, index) {
-                        // print(state.squares[index].boxNumber());
-                        // print(state.squares[index].piece?.getIdentity);
-                         return SquareWidget(
-                        myState: state.squares[index],
-                      );}
-                    ),
+                        itemCount: state.squares.length,
+                        scrollDirection: Axis.horizontal,
+                        physics: const NeverScrollableScrollPhysics(),
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: xCount),
+                        itemBuilder: (context, index) {
+                          return SquareWidget(
+                            myState: state.squares[index],
+                          );
+                        }),
                   );
                 });
               },

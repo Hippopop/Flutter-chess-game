@@ -2,15 +2,17 @@
 
 This a side project of mine, where I am trying to build a chess game in flutter. Even tho there's a flutter game tool-kit but still I'm doing it with flutter. Cz most probably I'm dumb.😪 </br>
 But this is mostly for learnign purpose. Rn learning `flutter-bloc` with it. And experimenting with the `drag&drop` system.
+
+</br>
+
 >**⚠️Warning :**
 >This project is completely used for learning purpose by a `flutter-noob`. Judge the code structure and everything wisely. And any help and suggestion will be much appreciated.
 
 </br>
-</br>
 
 ---
 
->## Getting Started with Flutter
+## Getting Started with Flutter❔
 
 This project is a starting point for a Flutter application.
 

@@ -1,9 +1,7 @@
-import 'package:bloc/bloc.dart';
-import 'package:chess_game/src/models/piece_models.dart';
-import 'package:equatable/equatable.dart';
-
 import 'package:chess_game/src/global/constants/constants.dart';
 import 'package:chess_game/src/models/models.dart';
+import 'package:equatable/equatable.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 part 'game_event.dart';
 part 'game_state.dart';

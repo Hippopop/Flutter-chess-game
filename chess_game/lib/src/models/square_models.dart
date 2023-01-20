@@ -1,16 +1,28 @@
 import 'package:chess_game/src/global/constants/constants.dart';
 import 'package:chess_game/src/models/piece_models.dart';
-import 'package:chess_game/src/models/piece_models.dart';
+
+const List<String> charecters = [
+    "a",
+    "b",
+    "c",
+    "d",
+    "e",
+    "f",
+    "g",
+    "h",
+  ];
 
 class SquareCoordinate {
   final int column;
   final int row;
 
+  
+
   SquareCoordinate({required this.column, required this.row});
   factory SquareCoordinate.fromPosition({required SquarePosition position}) {
     return SquareCoordinate(
       row: position.row,
-      column: charToNum[position.column] ?? -1,
+      column: charecters.indexOf(position.column),
     );
   }
 
@@ -42,8 +54,9 @@ class SquarePosition {
 
   factory SquarePosition.fromCoordinate(SquareCoordinate coordinate) {
     return SquarePosition(
-        row: 8 - (coordinate.row),
-        column: numToChar[coordinate.column] ?? "error");
+      row: 8 - (coordinate.row),
+      column: charecters[coordinate.column],
+    );
   }
 
   @override

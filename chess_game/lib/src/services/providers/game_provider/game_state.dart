@@ -40,23 +40,48 @@ class GameInitial extends GameState {
         Square neededSquare =
             initialSquares.where((item) => item.boxNumber() == index).first;
 
-        PieceStructure correspondingPiece = fenStructure(char, neededSquare.getCoord);
+        PieceStructure correspondingPiece =
+            fenStructure(char, neededSquare.getCoord);
         neededSquare.setPiece(correspondingPiece);
-        // print(char);
-/*         if (char == char.toUpperCase()) {
-          print("#");
-          PieceStructure? whitePiece = fenMap[char.toLowerCase()]!(
-              coord: neededSquare.getCoord, identity: Identity.white);
-          neededSquare.setPiece(whitePiece);
-        } else {
-          // print("*");
 
-          PieceStructure? blackPiece = fenMap[char]!(
-              coord: neededSquare.getCoord, identity: Identity.black);
-          neededSquare.setPiece(blackPiece);
-        } */
         index++;
       }
+    }
+  }
+
+  PieceStructure fenStructure(String char, SquareCoordinate coordinate) {
+    assert(
+      char.length == 1 || char.isNotEmpty,
+      "⚠️ Invalid #fen code! ($char)",
+    );
+
+    switch (char) {
+      case "P":
+        return Pawn(coordinate, Identity.white);
+      case "p":
+        return Pawn(coordinate, Identity.black);
+      case "R":
+        return Rook(coordinate, Identity.white);
+      case "r":
+        return Rook(coordinate, Identity.black);
+      case "N":
+        return Knight(coordinate, Identity.white);
+      case "n":
+        return Knight(coordinate, Identity.black);
+      case "B":
+        return Bishop(coordinate, Identity.white);
+      case "b":
+        return Bishop(coordinate, Identity.black);
+      case "Q":
+        return Queen(coordinate, Identity.white);
+      case "q":
+        return Queen(coordinate, Identity.black);
+      case "K":
+        return King(coordinate, Identity.white);
+      case "k":
+        return King(coordinate, Identity.black);
+      default:
+        throw "⚠️ Invalid #fen code! ($char)";
     }
   }
 }

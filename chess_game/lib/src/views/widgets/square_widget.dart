@@ -1,7 +1,6 @@
 import 'package:chess_game/src/views/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 
-
 import '../../global/constants/constants.dart';
 import '../../models/models.dart';
 
@@ -40,7 +39,7 @@ class SquareWidgetState extends State<SquareWidget> {
     // MediaQuery.of(context);
     return GestureDetector(
       onTap: () {
-print(widget.myState.boxNumber());
+        print(widget.myState.boxNumber());
       },
       child: DragTarget<PieceStructure>(
         onAccept: (data) {
