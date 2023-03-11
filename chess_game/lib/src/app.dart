@@ -15,6 +15,8 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Chess',
       debugShowCheckedModeBanner: false,
       theme: LightTheme.lightTheme,
+      darkTheme: DarkTheme.darkTheme,
+      themeMode: ThemeMode.dark,
     );
   }
 }

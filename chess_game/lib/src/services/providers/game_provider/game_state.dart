@@ -1,87 +1,79 @@
 part of 'game_bloc.dart';
 
 abstract class GameState extends Equatable {
-  const GameState({List<Square>? custom})
-      : squares = custom ?? const <Square>[];
-  final List<Square> squares;
+  List<Square> get squares;
+  List<PieceStructure> get pieces;
+  List<Player> get players;
+
+  Player get turn;
+  GameState copyWith({
+    Player? currentTurn,
+    List<Square>? squares,
+    List<Player>? playersList,
+  }) {
+    return this;
+  }
+
   @override
   List<Object> get props => [squares];
 }
 
-class GameInitial extends GameState {
-  GameInitial({int? x, int? y, String? fen}) : initialSquares = [] {
-    List.generate(
-      x ?? 8,
-      (column) => List.generate(
-        y ?? 8,
-        (row) {
-          Square create = Square.fromWidget(column: column, row: row);
-          initialSquares.add(create);
-        },
-      ),
-    );
-    if (fen != null) {
-      fenConverter(fen);
-    }
-  }
-
-  final List<Square> initialSquares;
+@immutable
+class GameLoadState extends GameState {
+  @override
+  List<Square> get squares => [];
 
   @override
-  List<Square> get squares => initialSquares;
+  Player get turn => throw UnimplementedError();
 
-  fenConverter(String fen) {
-    final List<String> fenChars = fen.replaceAll("/", "").split("");
-    int index = 1;
-    for (var char in fenChars) {
-      if (int.tryParse(char) != null) {
-        index += int.parse(char);
-      } else {
-        Square neededSquare =
-            initialSquares.where((item) => item.boxNumber() == index).first;
+  @override
+  List<Player> get players => [];
 
-        PieceStructure correspondingPiece =
-            fenStructure(char, neededSquare.getCoord);
-        neededSquare.setPiece(correspondingPiece);
+  @override
+  List<PieceStructure> get pieces => [];
+}
 
-        index++;
-      }
-    }
-  }
+@immutable
+class BaseGameState extends GameState {
+  final Player currentTurn;
+  final List<Square> _squares;
+  final List<Player> _players;
+  BaseGameState({
+    required this.currentTurn,
+    required List<Square> squares,
+    required List<Player> players,
+  })  : _squares = squares,
+        _players = players;
 
-  PieceStructure fenStructure(String char, SquareCoordinate coordinate) {
-    assert(
-      char.length == 1 || char.isNotEmpty,
-      "⚠️ Invalid #fen code! ($char)",
+  @override
+  List<Square> get squares => _squares;
+
+  @override
+  Player get turn => currentTurn;
+
+  @override
+  List<Player> get players => _players;
+
+  @override
+  BaseGameState copyWith({
+    Player? currentTurn,
+    List<Square>? squares,
+    List<Player>? playersList,
+  }) {
+    return BaseGameState(
+      currentTurn: currentTurn ?? this.currentTurn,
+      squares: squares ?? this.squares,
+      players: playersList ?? players,
     );
-
-    switch (char) {
-      case "P":
-        return Pawn(coordinate, Identity.white);
-      case "p":
-        return Pawn(coordinate, Identity.black);
-      case "R":
-        return Rook(coordinate, Identity.white);
-      case "r":
-        return Rook(coordinate, Identity.black);
-      case "N":
-        return Knight(coordinate, Identity.white);
-      case "n":
-        return Knight(coordinate, Identity.black);
-      case "B":
-        return Bishop(coordinate, Identity.white);
-      case "b":
-        return Bishop(coordinate, Identity.black);
-      case "Q":
-        return Queen(coordinate, Identity.white);
-      case "q":
-        return Queen(coordinate, Identity.black);
-      case "K":
-        return King(coordinate, Identity.white);
-      case "k":
-        return King(coordinate, Identity.black);
-      default:
-        throw "⚠️ Invalid #fen code! ($char)";
-    }
   }
+
+  @override
+  List<PieceStructure> get pieces => [for (Player x in players) ...x.pieces];
+
+  @override
+  List<Object> get props => [currentTurn, squares];
+
+  @override
+  String toString() =>
+      'BaseGameState(currentTurn: $currentTurn, Players : $players)';
 }

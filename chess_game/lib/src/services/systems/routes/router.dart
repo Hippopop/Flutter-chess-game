@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 GoRouter myRouter = GoRouter(
-    initialLocation: '/',
+  initialLocation: '/',
   routes: [
     GoRoute(
       path: '/',
@@ -24,10 +24,11 @@ GoRouter myRouter = GoRouter(
     )
   ],
   errorPageBuilder: (context, state) => MaterialPage(
-      key: state.pageKey,
-      child: Scaffold(
-        body: Center(
-          child: Text(state.error.toString()),
-        ),
-      )),
+    key: state.pageKey,
+    child: Scaffold(
+      body: Center(
+        child: Text(state.error.toString()),
+      ),
+    ),
+  ),
 );

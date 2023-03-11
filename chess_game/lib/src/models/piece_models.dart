@@ -1,8 +1,9 @@
 import 'package:chess_game/src/models/square_models.dart';
+import 'package:equatable/equatable.dart';
 
 import '../global/constants/constants.dart';
 
-abstract class PieceStructure {
+abstract class PieceStructure extends Equatable {
   PieceStructure._(this.currentCoordinate, this.identity);
 
   SquareCoordinate? currentCoordinate;
@@ -14,8 +15,25 @@ abstract class PieceStructure {
   bool get getIsSelected => isSelected;
   bool get status => currentCoordinate != null;
 
-  void kill() {
+  void die() {
     currentCoordinate = null;
+  }
+
+  int? boxNumber() {
+    if (currentCoordinate == null) return null;
+    return currentCoordinate!.column +
+        currentCoordinate!.row +
+        (currentCoordinate!.row * 7) +
+        1;
+  }
+
+  bool canKill(PieceStructure? acquiredPiece) {
+    if (acquiredPiece == null) return false;
+    bool hasMove = getPossibleMoves.contains(acquiredPiece.currentCoordinate) ||
+        getName == "pawn";
+    bool differentColor = identity != acquiredPiece.getIdentity;
+    bool notKing = acquiredPiece.getName != "king";
+    return differentColor && notKing && hasMove;
   }
 
   void updateCoord(SquareCoordinate coordinate) {
@@ -23,11 +41,11 @@ abstract class PieceStructure {
     onCoordUpdate();
   }
 
-  void onCoordUpdate() {}
-
   void updateIdentity(Identity id) {
     identity = id;
   }
+
+  void onCoordUpdate() {}
 
   List<SquareCoordinate> get getPossibleMoves {
     throw UnimplementedError();
@@ -75,6 +93,34 @@ class Pawn extends PieceStructure {
   }
 
   @override
+  bool canKill(PieceStructure? acquiredPiece) {
+    if (acquiredPiece == null) return false;
+    if (identity == Identity.white) {
+      List<SquareCoordinate> possibleKillCoord = [
+        SquareCoordinate(
+            column: currentCoordinate!.column - 1,
+            row: currentCoordinate!.row - 1),
+        SquareCoordinate(
+            column: currentCoordinate!.column + 1,
+            row: currentCoordinate!.row - 1),
+      ];
+      return (possibleKillCoord.contains(acquiredPiece.currentCoordinate) &&
+          super.canKill(acquiredPiece));
+    } else {
+      List<SquareCoordinate> possibleKillCoord = [
+        SquareCoordinate(
+            column: currentCoordinate!.column - 1,
+            row: currentCoordinate!.row + 1),
+        SquareCoordinate(
+            column: currentCoordinate!.column + 1,
+            row: currentCoordinate!.row + 1),
+      ];
+      return (possibleKillCoord.contains(acquiredPiece.currentCoordinate) &&
+          super.canKill(acquiredPiece));
+    }
+  }
+
+  @override
   void onCoordUpdate() {
     firstMove = false;
     super.onCoordUpdate();
@@ -86,6 +132,9 @@ class Pawn extends PieceStructure {
   String get imagePath => "assets/pieces/png/${identity.name}_$name.png";
   @override
   int get getWorth => 1;
+
+  @override
+  List<Object?> get props => [currentCoordinate, getPossibleMoves];
 }
 
 class Bishop extends PieceStructure {
@@ -122,9 +171,7 @@ class Bishop extends PieceStructure {
   int get getWorth => 3;
 
   @override
-  void kill() {
-    currentCoordinate = null;
-  }
+  List<Object?> get props => [currentCoordinate, getPossibleMoves];
 }
 
 class Rook extends PieceStructure {
@@ -155,6 +202,8 @@ class Rook extends PieceStructure {
   String get imagePath => "assets/pieces/png/${identity.name}_$name.png";
   @override
   int get getWorth => 3;
+  @override
+  List<Object?> get props => [currentCoordinate, getPossibleMoves];
 }
 
 class Knight extends PieceStructure {
@@ -199,6 +248,8 @@ class Knight extends PieceStructure {
   String get imagePath => "assets/pieces/png/${identity.name}_$name.png";
   @override
   int get getWorth => 3;
+  @override
+  List<Object?> get props => [currentCoordinate, getPossibleMoves];
 }
 
 class Queen extends PieceStructure {
@@ -243,27 +294,13 @@ class Queen extends PieceStructure {
   String get imagePath => "assets/pieces/png/${identity.name}_$name.png";
   @override
   int get getWorth => 9;
+  @override
+  List<Object?> get props => [currentCoordinate, getPossibleMoves];
 }
 
 class King extends PieceStructure {
   King(SquareCoordinate currentCoordinate, Identity identity)
       : super._(currentCoordinate, identity);
-
-/*   bool isSelected = false;
-
-  @override
-  SquareCoordinate? get getCurrentCoordinate => ownCoordinate ?? super.getCurrentCoordinate; */
-
-  /* @override
-  void updateIdentity(Identity newIdentity) {
-    ownIdentity = newIdentity;
-  } */
-
-/*   @override
-  bool get getIsSelected => isSelected;
-
-  @override
-  Identity get getIdentity => ownIdentity ?? super.getIdentity; */
 
   @override
   List<SquareCoordinate> get getPossibleMoves {
@@ -297,4 +334,6 @@ class King extends PieceStructure {
   String get getName => "king";
   @override
   int get getWorth => 55;
+  @override
+  List<Object?> get props => [currentCoordinate, getPossibleMoves];
 }

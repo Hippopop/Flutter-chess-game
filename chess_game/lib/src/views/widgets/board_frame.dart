@@ -17,9 +17,13 @@ class BoardFrame extends StatelessWidget {
         return ConstrainedBox(
           constraints: BoxConstraints(
             maxHeight: _getBoardSize(
-                outerConstrains.maxHeight, outerConstrains.maxWidth),
+              outerConstrains.maxHeight,
+              outerConstrains.maxWidth,
+            ),
             maxWidth: _getBoardSize(
-                outerConstrains.maxHeight, outerConstrains.maxWidth),
+              outerConstrains.maxHeight,
+              outerConstrains.maxWidth,
+            ),
           ),
           child: Container(
             decoration: BoxDecoration(
@@ -31,26 +35,28 @@ class BoardFrame extends StatelessWidget {
             ),
             child: BlocBuilder<GameBloc, GameState>(
               builder: (context, state) {
-                return LayoutBuilder(builder: (context, constrains) {
-                  print(state.squares[0].boxNumber());
-                  print(state.squares[0].piece?.identity);
-
-                  return SizedBox.square(
-                    dimension: _getBoardSize(
-                        constrains.maxHeight, constrains.maxWidth),
-                    child: GridView.builder(
-                        itemCount: state.squares.length,
-                        scrollDirection: Axis.horizontal,
-                        physics: const NeverScrollableScrollPhysics(),
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: xCount),
-                        itemBuilder: (context, index) {
-                          return SquareWidget(
-                            myState: state.squares[index],
-                          );
-                        }),
-                  );
-                });
+                if (state is GameLoadState) {
+                  return const Center(child: CircularProgressIndicator());
+                } else {
+                  return LayoutBuilder(builder: (context, constrains) {
+                    return SizedBox.square(
+                      dimension: _getBoardSize(
+                          constrains.maxHeight, constrains.maxWidth),
+                      child: GridView.builder(
+                          itemCount: state.squares.length,
+                          scrollDirection: Axis.horizontal,
+                          physics: const NeverScrollableScrollPhysics(),
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: xCount),
+                          itemBuilder: (context, index) {
+                            return SquareWidget(
+                              myState: state.squares[index],
+                            );
+                          }),
+                    );
+                  });
+                }
               },
             ),
           ),

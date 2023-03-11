@@ -13,9 +13,15 @@ class GameScreen extends StatefulWidget {
 class _GameScreenState extends State<GameScreen> {
   @override
   Widget build(BuildContext context) {
+    const fenString = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
     return Scaffold(
       body: BlocProvider(
-        create: (context) => GameBloc.operate(fen: "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR"),
+        create: (context) => GameBloc()
+          ..add(
+            const InitializeBaseFenEvent(
+              fenString: fenString,
+            ),
+          ),
         child: const Center(
           child: BoardFrame(),
         ),
