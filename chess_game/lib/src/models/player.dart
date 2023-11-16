@@ -18,7 +18,10 @@ class Player extends Equatable {
   final Identity playerIdentity;
   final PieceStructure? selectedPiece;
   final List<PieceStructure> _pieces;
-  List<PieceStructure> get pieces => _pieces;
+  List<PieceStructure> get activePieces =>
+      _pieces.where((element) => element.currentCoordinate != null).toList();
+  List<PieceStructure> get deadPieces =>
+      _pieces.where((element) => element.currentCoordinate == null).toList();
 
   SquareCoordinate get kingCoord => _pieces
       .where(
@@ -27,7 +30,10 @@ class Player extends Equatable {
       .first
       .getCurrentCoordinate;
 
-  Player copyWith({PieceStructure? selected, List<PieceStructure>? pieces, bool? check}) =>
+  Player copyWith(
+          {PieceStructure? selected,
+          List<PieceStructure>? pieces,
+          bool? check}) =>
       Player(
         id: _id,
         onCheck: check ?? onCheck,

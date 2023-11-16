@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:chess_game/src/global/constants/constants.dart';
 import 'package:chess_game/src/models/models.dart';
+import 'package:collection/collection.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -37,10 +38,12 @@ class GameBloc extends Bloc<GameEvent, GameState> {
   _hoverOnSquare(PieceHoverOnSquare event, Emitter<GameState> emit) {
     if (event.triggredPiece.getPossibleMoves
             .contains(event.onSquare.getCoord) ||
-        event.triggredPiece.canKill(event.onSquare.piece)) {
-      if (event.onSquare.piece == null) {
+        event.triggredPiece
+            .canKill(state.pieceForCoord(event.onSquare.getCoord))) {
+      if (state.pieceForCoord(event.onSquare.getCoord) == null) {
         event.onSquare.setState(SquareState.activity);
-      } else if (event.triggredPiece.canKill(event.onSquare.piece)) {
+      } else if (event.triggredPiece
+          .canKill(state.pieceForCoord(event.onSquare.getCoord))) {
         event.onSquare.setState(SquareState.kill);
       }
     }
@@ -48,16 +51,14 @@ class GameBloc extends Bloc<GameEvent, GameState> {
   }
 
   _move(Move event, Emitter<GameState> emit) {
-    if (event.targettedSquare.piece != null &&
-        event.targettedSquare.piece!.identity.name !=
-            event.piece.identity.name) {
+    final currentPiece = state.pieceForCoord(event.targettedSquare.getCoord);
+
+    if (currentPiece != null && currentPiece.identityMatch(event.piece)) {
       event.targettedSquare.setState(SquareState.kill);
     } else {
       event.targettedSquare.setState(SquareState.none);
     }
-    event.targettedSquare
-        .setPiece(event.piece..updateCoord(event.targettedSquare.getCoord));
-
+    event.piece.updateCoord(event.targettedSquare.getCoord);
     emit(state.copyWith(
       currentTurn: state.players.rotate(state.turn),
     ));
@@ -67,11 +68,6 @@ class GameBloc extends Bloc<GameEvent, GameState> {
     List<Square> initialSquares = [];
     List<PieceStructure> blackPieces = [];
     List<PieceStructure> whitePieces = [];
-    SquareCoordinate whiteKingLocation;
-    SquareCoordinate blackKingLocation;
-    final List<String> fenChars = event.fenString.replaceAll("/", "").split("");
-    int index = 1;
-
     List.generate(
       event.xAxis,
       (column) => List.generate(
@@ -83,6 +79,8 @@ class GameBloc extends Bloc<GameEvent, GameState> {
       ),
     );
 
+    int index = 1;
+    final List<String> fenChars = event.fenString.replaceAll("/", "").split("");
     for (var char in fenChars) {
       if (int.tryParse(char) != null) {
         index += int.parse(char);
@@ -92,32 +90,28 @@ class GameBloc extends Bloc<GameEvent, GameState> {
 
         PieceStructure correspondingPiece =
             _fenStructure(char, neededSquare.getCoord);
+        correspondingPiece.calculateMoves((targetSquare) {
+          return correspondingPiece;
+        });
 
         if (correspondingPiece.identity == Identity.white) {
-          if (correspondingPiece.getName == 'king') {
-            whiteKingLocation = neededSquare.getCoord;
-            print(whiteKingLocation);
-          }
           whitePieces.add(correspondingPiece);
-          neededSquare.setPiece(whitePieces.last);
         } else {
-          if (correspondingPiece.getName == 'king') {
-            blackKingLocation = neededSquare.getCoord;
-            print(blackKingLocation);
-          }
           blackPieces.add(correspondingPiece);
-          neededSquare.setPiece(blackPieces.last);
         }
-
         index++;
       }
     }
+
     final players = [
       Player(playerIdentity: Identity.white, pieces: whitePieces),
       Player(playerIdentity: Identity.black, pieces: blackPieces),
     ];
     emit(BaseGameState(
-        currentTurn: players.first, squares: initialSquares, players: players));
+      currentTurn: players.first,
+      squares: initialSquares,
+      players: players,
+    ));
   }
 }
 

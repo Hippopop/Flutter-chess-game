@@ -3,6 +3,8 @@ import 'package:equatable/equatable.dart';
 
 import '../global/constants/constants.dart';
 
+typedef ValidityCallback = PieceStructure Function(SquareCoordinate targetSquare);
+
 abstract class PieceStructure extends Equatable {
   PieceStructure._(this.currentCoordinate, this.identity);
 
@@ -15,8 +17,14 @@ abstract class PieceStructure extends Equatable {
   bool get getIsSelected => isSelected;
   bool get status => currentCoordinate != null;
 
+  calculateMoves(ValidityCallback? validate) {}
+
   void die() {
     currentCoordinate = null;
+  }
+
+  bool identityMatch(PieceStructure other) {
+    return identity == other.identity;
   }
 
   int? boxNumber() {
@@ -66,30 +74,39 @@ class Pawn extends PieceStructure {
   bool firstMove = true;
   @override
   SquareCoordinate get getCurrentCoordinate => currentCoordinate!;
+
+  List<SquareCoordinate> _moves = [];
+
   @override
-  List<SquareCoordinate> get getPossibleMoves {
-    List<SquareCoordinate> moves = [];
+  List<SquareCoordinate> get getPossibleMoves => _moves;
+
+  @override
+  calculateMoves(ValidityCallback? validate) {
+    _moves.clear();
+    // List<SquareCoordinate> moves = [];
     if (identity == Identity.black) {
       final rowMove = SquareCoordinate(
           column: currentCoordinate!.column, row: currentCoordinate!.row + 1);
-      moves.add(rowMove);
+      _moves.add(rowMove);
       if (firstMove) {
         final secondSquare = SquareCoordinate(
             column: currentCoordinate!.column, row: currentCoordinate!.row + 2);
-        moves.add(secondSquare);
+        _moves.add(secondSquare);
       }
-      return moves;
+      // return _moves;
     } else {
       final rowMove = SquareCoordinate(
           column: currentCoordinate!.column, row: currentCoordinate!.row - 1);
-      moves.add(rowMove);
+      _moves.add(rowMove);
       if (firstMove) {
         final secondSquare = SquareCoordinate(
             column: currentCoordinate!.column, row: currentCoordinate!.row - 2);
-        moves.add(secondSquare);
+        _moves.add(secondSquare);
       }
-      return moves;
+      // return moves;
     }
+
+    return super.calculateMoves(validate);
   }
 
   @override
@@ -143,24 +160,31 @@ class Bishop extends PieceStructure {
 
   String name = "bishop";
 
+  final List<SquareCoordinate> _moves = [];
+
   @override
-  List<SquareCoordinate> get getPossibleMoves {
-    final List<SquareCoordinate> moves = [];
+  List<SquareCoordinate> get getPossibleMoves => _moves;
+
+  @override
+  calculateMoves(ValidityCallback? validate) {
+    _moves.clear();
+    // final List<SquareCoordinate> _moves = [];
     for (int i = 1; i < 8; i++) {
-      moves.add(SquareCoordinate(
+      _moves.add(SquareCoordinate(
           column: currentCoordinate!.column + i,
           row: currentCoordinate!.row + i));
-      moves.add(SquareCoordinate(
+      _moves.add(SquareCoordinate(
           column: currentCoordinate!.column - i,
           row: currentCoordinate!.row - i));
-      moves.add(SquareCoordinate(
+      _moves.add(SquareCoordinate(
           column: currentCoordinate!.column + i,
           row: currentCoordinate!.row - i));
-      moves.add(SquareCoordinate(
+      _moves.add(SquareCoordinate(
           column: currentCoordinate!.column - i,
           row: currentCoordinate!.row + i));
     }
-    return moves;
+    // return moves;
+    return super.calculateMoves(validate);
   }
 
   @override
@@ -180,20 +204,27 @@ class Rook extends PieceStructure {
 
   String name = "rook";
 
+  final List<SquareCoordinate> _moves = [];
+
   @override
-  List<SquareCoordinate> get getPossibleMoves {
-    final List<SquareCoordinate> moves = [];
+  List<SquareCoordinate> get getPossibleMoves => _moves;
+
+  @override
+  calculateMoves(ValidityCallback? validate) {
+    _moves.clear();
+    // final List<SquareCoordinate> _moves = [];
     for (int i = 1; i < 8; i++) {
-      moves.add(SquareCoordinate(
+      _moves.add(SquareCoordinate(
           column: currentCoordinate!.column + i, row: currentCoordinate!.row));
-      moves.add(SquareCoordinate(
+      _moves.add(SquareCoordinate(
           column: currentCoordinate!.column - i, row: currentCoordinate!.row));
-      moves.add(SquareCoordinate(
+      _moves.add(SquareCoordinate(
           column: currentCoordinate!.column, row: currentCoordinate!.row - i));
-      moves.add(SquareCoordinate(
+      _moves.add(SquareCoordinate(
           column: currentCoordinate!.column, row: currentCoordinate!.row + i));
     }
-    return moves;
+    // return moves;
+    return super.calculateMoves(validate);
   }
 
   @override
@@ -212,34 +243,39 @@ class Knight extends PieceStructure {
 
   String name = "knight";
 
+  final List<SquareCoordinate> _moves = [];
+
   @override
-  List<SquareCoordinate> get getPossibleMoves {
-    final List<SquareCoordinate> moves = [];
-    moves.add(SquareCoordinate(
+  List<SquareCoordinate> get getPossibleMoves => _moves;
+
+  @override
+  calculateMoves(ValidityCallback? validate) {
+    _moves.clear();
+    _moves.add(SquareCoordinate(
         column: currentCoordinate!.column + 2,
         row: currentCoordinate!.row + 1));
-    moves.add(SquareCoordinate(
+    _moves.add(SquareCoordinate(
         column: currentCoordinate!.column + 2,
         row: currentCoordinate!.row - 1));
-    moves.add(SquareCoordinate(
+    _moves.add(SquareCoordinate(
         column: currentCoordinate!.column + 1,
         row: currentCoordinate!.row + 2));
-    moves.add(SquareCoordinate(
+    _moves.add(SquareCoordinate(
         column: currentCoordinate!.column - 1,
         row: currentCoordinate!.row + 2));
-    moves.add(SquareCoordinate(
+    _moves.add(SquareCoordinate(
         column: currentCoordinate!.column - 2,
         row: currentCoordinate!.row + 1));
-    moves.add(SquareCoordinate(
+    _moves.add(SquareCoordinate(
         column: currentCoordinate!.column - 2,
         row: currentCoordinate!.row - 1));
-    moves.add(SquareCoordinate(
+    _moves.add(SquareCoordinate(
         column: currentCoordinate!.column + 1,
         row: currentCoordinate!.row - 2));
-    moves.add(SquareCoordinate(
+    _moves.add(SquareCoordinate(
         column: currentCoordinate!.column - 1,
         row: currentCoordinate!.row - 2));
-    return moves;
+    return super.calculateMoves(validate);
   }
 
   @override
@@ -258,34 +294,39 @@ class Queen extends PieceStructure {
 
   String name = "queen";
 
+  final List<SquareCoordinate> _moves = [];
+
   @override
-  List<SquareCoordinate> get getPossibleMoves {
-    final List<SquareCoordinate> moves = [];
+  List<SquareCoordinate> get getPossibleMoves => _moves;
+
+  @override
+  calculateMoves(ValidityCallback? validate) {
+    _moves.clear();
     for (int i = 1; i < 8; i++) {
       //Bishop
-      moves.add(SquareCoordinate(
+      _moves.add(SquareCoordinate(
           column: currentCoordinate!.column + i,
           row: currentCoordinate!.row + i));
-      moves.add(SquareCoordinate(
+      _moves.add(SquareCoordinate(
           column: currentCoordinate!.column - i,
           row: currentCoordinate!.row - i));
-      moves.add(SquareCoordinate(
+      _moves.add(SquareCoordinate(
           column: currentCoordinate!.column + i,
           row: currentCoordinate!.row - i));
-      moves.add(SquareCoordinate(
+      _moves.add(SquareCoordinate(
           column: currentCoordinate!.column - i,
           row: currentCoordinate!.row + i));
       //Rook
-      moves.add(SquareCoordinate(
+      _moves.add(SquareCoordinate(
           column: currentCoordinate!.column + i, row: currentCoordinate!.row));
-      moves.add(SquareCoordinate(
+      _moves.add(SquareCoordinate(
           column: currentCoordinate!.column - i, row: currentCoordinate!.row));
-      moves.add(SquareCoordinate(
+      _moves.add(SquareCoordinate(
           column: currentCoordinate!.column, row: currentCoordinate!.row - i));
-      moves.add(SquareCoordinate(
+      _moves.add(SquareCoordinate(
           column: currentCoordinate!.column, row: currentCoordinate!.row + i));
     }
-    return moves;
+    return super.calculateMoves(validate);
   }
 
   @override
@@ -302,30 +343,35 @@ class King extends PieceStructure {
   King(SquareCoordinate currentCoordinate, Identity identity)
       : super._(currentCoordinate, identity);
 
+  final List<SquareCoordinate> _moves = [];
+
   @override
-  List<SquareCoordinate> get getPossibleMoves {
-    final List<SquareCoordinate> moves = [];
-    moves.add(SquareCoordinate(
+  List<SquareCoordinate> get getPossibleMoves => _moves;
+
+  @override
+  calculateMoves(ValidityCallback? validate) {
+    _moves.clear();
+    _moves.add(SquareCoordinate(
         column: currentCoordinate!.column + 1, row: currentCoordinate!.row));
-    moves.add(SquareCoordinate(
+    _moves.add(SquareCoordinate(
         column: currentCoordinate!.column - 1, row: currentCoordinate!.row));
-    moves.add(SquareCoordinate(
+    _moves.add(SquareCoordinate(
         column: currentCoordinate!.column, row: currentCoordinate!.row + 1));
-    moves.add(SquareCoordinate(
+    _moves.add(SquareCoordinate(
         column: currentCoordinate!.column, row: currentCoordinate!.row - 1));
-    moves.add(SquareCoordinate(
+    _moves.add(SquareCoordinate(
         column: currentCoordinate!.column + 1,
         row: currentCoordinate!.row + 1));
-    moves.add(SquareCoordinate(
+    _moves.add(SquareCoordinate(
         column: currentCoordinate!.column - 1,
         row: currentCoordinate!.row - 1));
-    moves.add(SquareCoordinate(
+    _moves.add(SquareCoordinate(
         column: currentCoordinate!.column + 1,
         row: currentCoordinate!.row - 1));
-    moves.add(SquareCoordinate(
+    _moves.add(SquareCoordinate(
         column: currentCoordinate!.column - 1,
         row: currentCoordinate!.row + 1));
-    return moves;
+    return super.calculateMoves(validate);
   }
 
   @override

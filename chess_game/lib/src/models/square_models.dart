@@ -1,5 +1,4 @@
 import 'package:chess_game/src/global/constants/constants.dart';
-import 'package:chess_game/src/models/piece_models.dart';
 import 'package:equatable/equatable.dart';
 
 const List<String> charecters = [
@@ -27,7 +26,7 @@ class SquareCoordinate {
 
   SquarePosition getPostion() => SquarePosition.fromCoordinate(this);
 
-  Identity getSquareIdentity() =>
+  Identity getIdentityByCoord() =>
       (column + row).isOdd ? Identity.black : Identity.white;
 
   @override
@@ -76,21 +75,17 @@ class SquarePosition {
 
 class Square extends Equatable {
   SquareCoordinate _squareCoordinate;
-  PieceStructure? _piece;
-  SquareState _squareState = SquareState.none;
+SquareState _squareState = SquareState.none;
 
-  Square._(this._squareCoordinate, this._piece);
+  Square._(this._squareCoordinate);
 
-  factory Square.fromWidget(
-      {required int row, required int column, PieceStructure? piece}) {
-    return Square._(SquareCoordinate(column: column, row: row), piece);
+  factory Square.fromWidget({required int row, required int column}) {
+    return Square._(SquareCoordinate(column: column, row: row));
   }
 
   SquareState get getCurrentState => _squareState;
 
-  Identity get identity => _squareCoordinate.getSquareIdentity();
-
-  PieceStructure? get piece => _piece;
+  Identity get identity => _squareCoordinate.getIdentityByCoord();
 
   SquareCoordinate get getCoord => _squareCoordinate;
 
@@ -104,14 +99,8 @@ class Square extends Equatable {
     _squareState = state;
   }
 
-  setPiece(PieceStructure piece) => _piece = piece;
-  removePiece() => _piece = null;
-
-  bool containsPiece() => _piece != null;
-
   @override
   List<Object?> get props => [
-        _piece,
         _squareCoordinate,
         _squareState,
       ];

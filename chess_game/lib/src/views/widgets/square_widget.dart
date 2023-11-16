@@ -14,9 +14,6 @@ class SquareWidget extends StatefulWidget {
   }) : super(key: key);
 
   final Square myState;
-  updateOnkill() {
-    myState.removePiece();
-  }
 
   @override
   State<SquareWidget> createState() => SquareWidgetState();
@@ -55,13 +52,13 @@ class SquareWidgetState extends State<SquareWidget> {
           });
         },
         onWillAccept: (data) {
-          if (widget.myState.piece == null) {
+          if (!gameBloc.state.pieces.any((element) => element.currentCoordinate == widget.myState.getCoord)) {
             return data!.getPossibleMoves.contains(widget.myState.getCoord);
           } else {
             return (data!.getName == "pawn")
-                ? data.canKill(widget.myState.piece)
+                ? data.canKill(gameBloc.state.pieces.where((element) => element.currentCoordinate == widget.myState.getCoord).first)
                 : data.getPossibleMoves.contains(widget.myState.getCoord) &&
-                    data.canKill(widget.myState.piece);
+                    data.canKill(gameBloc.state.pieces.where((element) => element.currentCoordinate == widget.myState.getCoord).first);
           }
         },
         builder: (context, candidateData, rejectedData) => Card(
@@ -73,10 +70,10 @@ class SquareWidgetState extends State<SquareWidget> {
           child: Stack(
             children: [
               SquareStateWidget(state: widget.myState.getCurrentState),
-              if (widget.myState.containsPiece())
+              if (gameBloc.state.pieces.any((element) => element.currentCoordinate == widget.myState.getCoord))
                 LayoutBuilder(builder: (context, constraints) {
                   return PieceWidget(
-                    piece: widget.myState.piece!,
+                    piece: gameBloc.state.pieces.where((element) => element.currentCoordinate == widget.myState.getCoord).first,
                     height: constraints.maxHeight,
                     width: constraints.maxWidth,
                   );

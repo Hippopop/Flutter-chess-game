@@ -4,8 +4,10 @@ abstract class GameState extends Equatable {
   List<Square> get squares;
   List<PieceStructure> get pieces;
   List<Player> get players;
-
   Player get turn;
+
+  PieceStructure? pieceForCoord(SquareCoordinate coord);
+
   GameState copyWith({
     Player? currentTurn,
     List<Square>? squares,
@@ -31,6 +33,10 @@ class GameLoadState extends GameState {
 
   @override
   List<PieceStructure> get pieces => [];
+
+  @override
+  PieceStructure? pieceForCoord(SquareCoordinate coord) =>
+      throw UnimplementedError();
 }
 
 @immutable
@@ -55,6 +61,13 @@ class BaseGameState extends GameState {
   List<Player> get players => _players;
 
   @override
+  PieceStructure? pieceForCoord(SquareCoordinate coord) {
+    return pieces
+        .where((element) => element.currentCoordinate == coord)
+        .firstOrNull;
+  }
+
+  @override
   BaseGameState copyWith({
     Player? currentTurn,
     List<Square>? squares,
@@ -68,7 +81,8 @@ class BaseGameState extends GameState {
   }
 
   @override
-  List<PieceStructure> get pieces => [for (Player x in players) ...x.pieces];
+  List<PieceStructure> get pieces =>
+      [for (Player x in players) ...x.activePieces];
 
   @override
   List<Object> get props => [currentTurn, squares];
